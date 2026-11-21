@@ -18,17 +18,17 @@ jobs:
       matrix:
         channel: [release, dev]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check out the suite's repositories
         run: |
           while read -r repo; do
             [ -z "$repo" ] || [ "${repo:0:1}" = "#" ] && continue
             git clone --depth 1 "https://github.com/$repo" "suite/${repo#*/}"
           done < repos.txt
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ~/.ufbt
           key: ufbt-${{ matrix.channel }}-${{ github.run_id }}
@@ -57,7 +57,7 @@ jobs:
           Copy apps/*.fap to SD Card/apps/GPIO/ and infrared/*.ir to SD Card/infrared/ with qFlipper.
           Some apps need extra hardware: see https://github.com/Yara162/Master-AV-Flipper
           TXT
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: matrix.channel == 'release'
         with:
           name: av-flipper-suite
