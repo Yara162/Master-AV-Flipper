@@ -1,0 +1,64 @@
+# Builds every app in the AV Flipper suite against the release and dev SDKs, weekly and on demand,
+# so an SDK change that breaks an app shows up here before anyone flashes new firmware. On release,
+# also bundles every .fap and the IR library into one zip.
+name: suite
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"   # Mondays 06:17 UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, dev]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check out the suite's repositories
+        run: |
+          while read -r repo; do
+            [ -z "$repo" ] || [ "${repo:0:1}" = "#" ] && continue
+            git clone --depth 1 "https://github.com/$repo" "suite/${repo#*/}"
+          done < repos.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.ufbt
+          key: ufbt-${{ matrix.channel }}-${{ github.run_id }}
+          restore-keys: ufbt-${{ matrix.channel }}-
+      - name: Install ufbt and the ${{ matrix.channel }} SDK
+        run: |
+          pip install --upgrade ufbt
+          ufbt update --channel=${{ matrix.channel }}
+      - name: Build every app
+        # The dev SDK changes often; a break there is a warning, not a failed suite.
+        continue-on-error: ${{ matrix.channel == 'dev' }}
+        run: scripts/build-all.sh out suite
+      - name: Summary
+        if: always()
+        run: |
+          echo "## ${{ matrix.channel }} SDK" >> "$GITHUB_STEP_SUMMARY"
+          cat out/build-summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Bundle
+        if: matrix.channel == 'release'
+        run: |
+          mkdir -p bundle/apps bundle/infrared
+          cp out/*.fap bundle/apps/
+          cp suite/Flipper-AVIR/library/*/*.ir suite/Flipper-AVIR/universal/*.ir bundle/infrared/ 2>/dev/null || true
+          cp out/build-summary.md bundle/
+          cat > bundle/README.txt <<'TXT'
+          Copy apps/*.fap to SD Card/apps/GPIO/ and infrared/*.ir to SD Card/infrared/ with qFlipper.
+          Some apps need extra hardware: see https://github.com/Yara162/Master-AV-Flipper
+          TXT
+      - uses: actions/upload-artifact@v4
+        if: matrix.channel == 'release'
+        with:
+          name: av-flipper-suite
+          path: bundle/

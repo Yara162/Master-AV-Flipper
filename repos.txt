@@ -1,0 +1,5 @@
+# Repositories in the AV Flipper suite, one owner/name per line. suite.yml builds them all.
+Yara162/Flipper-Network-Tools
+Yara162/Flipper-Cereal-Tools
+Yara162/flipper-av-tools
+Yara162/Flipper-AVIR

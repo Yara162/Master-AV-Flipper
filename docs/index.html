@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master AV Flipper</title>
+<meta name="description" content="Flipper Zero tools for AV commissioning: HDMI test patterns, EDID, CEC, RS-232, Wi-Fi survey, IR codes and more.">
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1b1f24; --dim: #5b6470; --line: #e2e5ea;
+    --accent: #ff8200; --accent-ink: #b35a00; --chip: #f0f2f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121417; --card: #1b1e23; --text: #e8eaed; --dim: #9aa3ae; --line: #2a2f36;
+      --accent: #ff8200; --accent-ink: #ffa64d; --chip: #252a31;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 48px 16px 64px; }
+  header h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.02em; }
+  header h1 span { color: var(--accent); }
+  header p { max-width: 640px; color: var(--dim); margin: 0 0 24px; font-size: 18px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+  .btn { display: inline-block; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;
+    border: 1px solid var(--line); color: var(--text); background: var(--card); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #1b1f24; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); margin: 40px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px;
+    display: flex; flex-direction: column; gap: 8px; }
+  .card h3 { margin: 0; font-size: 17px; }
+  .card p { margin: 0; color: var(--dim); font-size: 15px; flex: 1; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; }
+  .chip { background: var(--chip); border-radius: 999px; padding: 2px 10px; color: var(--dim); }
+  .card a { color: var(--accent-ink); font-weight: 600; text-decoration: none; font-size: 14px; }
+  .card a:hover, .btn:hover { text-decoration: underline; }
+  ol { padding-left: 20px; color: var(--dim); }
+  ol code, p code { background: var(--chip); padding: 1px 6px; border-radius: 4px; color: var(--text); font-size: 14px; }
+  footer { margin-top: 56px; color: var(--dim); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Master <span>AV</span> Flipper</h1>
+    <p>Flipper Zero tools for AV commissioning. Prove an HDMI path, read an EDID, drive a display over
+      RS-232, survey the Wi-Fi or fire an IR code, all without getting a laptop out.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/Yara162/Master-AV-Flipper/actions/workflows/suite.yml">Download the suite</a>
+      <a class="btn" href="https://github.com/Yara162/Master-AV-Flipper">Source and build system</a>
+    </div>
+  </header>
+
+  <h2>HDMI and video</h2>
+  <div class="grid">
+    <div class="card"><h3>VGM Test Patterns</h3><p>13 test patterns over HDMI with selectable resolution and a source label.</p>
+      <div class="meta"><span class="chip">Video Game Module</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+    <div class="card"><h3>EDID Reader</h3><p>Reads and decodes a display's EDID, and checks HDCP and HDMI 2.0 support.</p>
+      <div class="meta"><span class="chip">HDMI breakout</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+    <div class="card"><h3>CEC Tool</h3><p>Monitors HDMI-CEC traffic and sends power, input and volume commands.</p>
+      <div class="meta"><span class="chip">HDMI breakout</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+    <div class="card"><h3>HDMI Link Monitor</h3><p>Watches +5 V and hot-plug in line, logs drops and can force a re-plug.</p>
+      <div class="meta"><span class="chip">HDMI breakout</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+    <div class="card"><h3>Pixel Fixer</h3><p>A rapid colour-noise loop for stuck pixels and image retention.</p>
+      <div class="meta"><span class="chip">Video Game Module</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+  </div>
+
+  <h2>Control</h2>
+  <div class="grid">
+    <div class="card"><h3>Cereal Tools</h3><p>RS-232 display and projector control, custom command lists, echo, sniffer, VISCA camera client and server, baud-rate finder.</p>
+      <div class="meta"><span class="chip">Flip'n Cereal HAT</span></div><a href="https://github.com/Yara162/Flipper-Cereal-Tools">Flipper-Cereal-Tools →</a></div>
+    <div class="card"><h3>AV IR library</h3><p>IR codes for displays and projectors, including discrete power on and off, plus universal files.</p>
+      <div class="meta"><span class="chip">Built-in IR</span></div><a href="https://github.com/Yara162/Flipper-AVIR">Flipper-AVIR →</a></div>
+    <div class="card"><h3>IR converter</h3><p>Turns Flipper <code>.ir</code> files into Pronto hex and Global Caché <code>sendir</code> strings in a browser.</p>
+      <div class="meta"><span class="chip">No hardware</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+  </div>
+
+  <h2>Network</h2>
+  <div class="grid">
+    <div class="card"><h3>Wi-Fi Tools</h3><p>Survey, signal walk test, join check, AirPlay/Dante/NDI discovery, device finder, stability logger and a PJLink/TCP/UDP/HTTP control client.</p>
+      <div class="meta"><span class="chip">Wi-Fi Devboard</span></div><a href="https://github.com/Yara162/Flipper-Network-Tools">Flipper-Network-Tools →</a></div>
+    <div class="card"><h3>LAN Tools</h3><p>The wired version of the network tools, in progress.</p>
+      <div class="meta"><span class="chip">W5500 module</span></div><a href="https://github.com/Yara162/Flipper-Network-Tools">Flipper-Network-Tools →</a></div>
+  </div>
+
+  <h2>Measurement</h2>
+  <div class="grid">
+    <div class="card"><h3>Lux Meter</h3><p>Light meter and nine-point projector brightness test.</p>
+      <div class="meta"><span class="chip">BH1750</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+    <div class="card"><h3>Power Monitor</h3><p>DC voltage, current and power with logging.</p>
+      <div class="meta"><span class="chip">INA219</span></div><a href="https://github.com/Yara162/flipper-av-tools">flipper-av-tools →</a></div>
+  </div>
+
+  <h2>Install</h2>
+  <ol>
+    <li>Open the latest successful <a href="https://github.com/Yara162/Master-AV-Flipper/actions/workflows/suite.yml">suite run</a> and download <strong>av-flipper-suite</strong>.</li>
+    <li>With qFlipper, copy <code>apps/*.fap</code> to <code>SD Card/apps/GPIO/</code> and <code>infrared/*.ir</code> to <code>SD Card/infrared/</code>.</li>
+    <li>Check each tool's README for its wiring and for what has been tested on real hardware.</li>
+  </ol>
+
+  <footer>Made by YZ. MIT License. Not affiliated with Flipper Devices.</footer>
+</main>
+</body>
+</html>

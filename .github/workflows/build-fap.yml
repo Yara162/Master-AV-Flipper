@@ -1,0 +1,68 @@
+# Reusable workflow: builds every Flipper app in the calling repository with ufbt, uploads the
+# .fap files as an artifact, and attaches them to the release when a tag is pushed.
+#
+# Call it from another repository's workflow (see examples/flipper-ci.yml):
+#   jobs:
+#     build:
+#       uses: Yara162/Master-AV-Flipper/.github/workflows/build-fap.yml@main
+name: build-fap
+on:
+  workflow_call:
+    inputs:
+      channel:
+        description: "SDK channel to build against: release, rc or dev"
+        type: string
+        default: release
+      paths:
+        description: "Space-separated folders to search for application.fam (default: the whole repository)"
+        type: string
+        default: "."
+      attach-to-release:
+        description: "On a tag push, attach the .fap files to that tag's GitHub release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the app repository
+        uses: actions/checkout@v4
+      - name: Check out the build script
+        uses: actions/checkout@v4
+        with:
+          repository: Yara162/Master-AV-Flipper
+          path: .master-av-flipper
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache the SDK and toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.ufbt
+          key: ufbt-${{ inputs.channel }}-${{ github.run_id }}
+          restore-keys: ufbt-${{ inputs.channel }}-
+      - name: Install ufbt and the ${{ inputs.channel }} SDK
+        run: |
+          pip install --upgrade ufbt
+          ufbt update --channel=${{ inputs.channel }}
+      - name: Build
+        run: .master-av-flipper/scripts/build-all.sh fap-out ${{ inputs.paths }}
+      - name: Summary
+        if: always()
+        run: cat fap-out/build-summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: faps-${{ inputs.channel }}
+          path: fap-out/
+      - name: Attach to release
+        if: inputs.attach-to-release && startsWith(github.ref, 'refs/tags/') && inputs.channel == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" fap-out/*.fap --clobber
